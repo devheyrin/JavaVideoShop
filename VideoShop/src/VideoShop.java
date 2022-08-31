@@ -20,10 +20,10 @@ public class VideoShop extends JFrame{
 		pane.addTab("고객관리", customer);
 		pane.addTab("비디오관리", video);
 		pane.addTab("대여관리", rent);
-		
+		pane.setSelectedIndex(0); // 초기화면 지정
 		
 		getContentPane().add("Center", pane);
-		setSize(300, 200);
+		setSize(800, 600);
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
