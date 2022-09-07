@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 import model.rec.CustomerVO;
 
@@ -78,7 +79,7 @@ public class CustomerDAO {
 
 	}
 
-	public CustomerVO searchName(String name) throws Exception {
+	public ArrayList searchName(String name) throws Exception {
 		/*
 		 * 1. sql 작성하기 ( select 문 : 함수의 인자로 넘어온 이름과 같은 조건의 레코드 검색 ) 
 		 * 2. sql 전송객체 얻어오기 (Statement / PreparedStatement 모두 적합 ) 
@@ -93,17 +94,20 @@ public class CustomerDAO {
 		ps.setString(1, name);
 		ResultSet rs = ps.executeQuery();
 		
-		if(rs.next()) {
+		ArrayList list = new ArrayList();
+		
+		while(rs.next()) {
 			vo = new CustomerVO();
 			vo.setName(rs.getString("custname"));
 			vo.setTel(rs.getString("custtel"));
 			vo.setAddtel(rs.getString("custtelaid"));
 			vo.setAddr(rs.getString("CUSTADDR"));
 			vo.setEmail(rs.getString("custemail"));
+			list.add(vo);
 		}
 		rs.close();
 		ps.close();
-		return vo;
+		return list;
 
 	}
 

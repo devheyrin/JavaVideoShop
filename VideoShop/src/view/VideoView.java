@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -180,6 +182,51 @@ public class VideoView extends JPanel implements ActionListener {
 		bVideoDelete.addActionListener(this);
 		tfVideoSearch.addActionListener(this);
 		cbMultiInsert.addActionListener(this);
+		
+		// JTable에 마우스 클릭 이벤트 
+		tableVideo.addMouseListener(new MouseAdapter() {
+			
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("클릭");
+				int row = tableVideo.getSelectedRow();
+				int col = 0;
+				int videoNum = (int) tableVideo.getValueAt(row, col);
+				System.out.println(videoNum);
+				VideoVO vo= new VideoVO();
+				try {
+					vo = dao.findByNum(videoNum);
+					tfVideoNum.setText(vo.getVideono());
+					tfVideoDirector.setText(vo.getDirector());
+					tfVideoActor.setText(vo.getActor());
+					tfVideoTitle.setText(vo.getTitle());
+					taVideoContent.setText(vo.getContent());
+					comVideoJanre.setSelectedItem(vo.getGenre());
+					
+				} catch (Exception e2) {
+					// TODO: handle exception
+					e2.printStackTrace();
+					JOptionPane.showMessageDialog(null, e2.getMessage());
+				}
+				
+			}
+		});
+	}
+	
+	// 비디오 검색 
+	void selectTable() {
+		int sel = comVideoSearch.getSelectedIndex();
+		String text= tfVideoSearch.getText();
+		try {
+			ArrayList list = dao.videoSearch(sel, text);
+			tmVideo.data = list;
+			tableVideo.setModel(tmVideo);
+			tmVideo.fireTableDataChanged();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "검색 실패");
+		}
+		
 	}
 
 	public void actionPerformed(ActionEvent ev) {
@@ -213,6 +260,28 @@ public class VideoView extends JPanel implements ActionListener {
 			}
 
 		} else if (o == bVideoModify) {
+			String num = tfVideoNum.getText();
+			String janre = (String)comVideoJanre.getSelectedItem(); // 장르
+			String title = tfVideoTitle.getText();
+			String director = tfVideoDirector.getText();
+			String actor = tfVideoActor.getText();
+			String content = taVideoContent.getText();
+			int count = Integer.parseInt(tfInsertCount.getText()); // 입고갯수
+			
+			VideoVO vo = new VideoVO(title, janre, director, actor, content);
+			vo.setVideono(num);
+			
+			
+			try {
+				dao.videoModify(vo, count);
+				JOptionPane.showMessageDialog(null, "비디오 수정 완료");
+				selectTable();
+				clearScreen();
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(null, e.getMessage());
+			}
 
 		} else if (o == bVideoDelete) {
 
@@ -223,19 +292,20 @@ public class VideoView extends JPanel implements ActionListener {
 			 * 3. 2의 결과(Vector)을 받아 TableModel의 data로 지정 
 			 * 4. Table에 TableModel을 다시 지정 5. TableModel에서 Table로 데이타 변경알리기
 			 */
-			System.out.println("비디오 검색");
-			int select = comVideoSearch.getSelectedIndex();
-			String text = tfVideoSearch.getText();
-			System.out.println(select +  text);
-			
-			try {
-				ArrayList list = dao.videoSearch(select, text);
-				tmVideo.data = list;
-				tableVideo.setModel(tmVideo);
-				tmVideo.fireTableDataChanged();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+//			System.out.println("비디오 검색");
+//			int select = comVideoSearch.getSelectedIndex();
+//			String text = tfVideoSearch.getText();
+//			System.out.println(select +  text);
+//			
+//			try {
+//				ArrayList list = dao.videoSearch(select, text);
+//				tmVideo.data = list;
+//				tableVideo.setModel(tmVideo);
+//				tmVideo.fireTableDataChanged();
+//			} catch (Exception e) {
+//				e.printStackTrace();
+//			}
+			selectTable();
 
 		} else if (o == cbMultiInsert) {
 			// 다중입고 선택시 입고갯수 입력란 편집가능하게 변경 

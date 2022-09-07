@@ -3,7 +3,7 @@ package model.rec;
 public class VideoVO {
 	// 멤버변수 선언
 	String title, genre, director, actor, exp, content;
-	int videono;
+	String videono;
 
 	// 생성자
 	public VideoVO() {
@@ -66,11 +66,11 @@ public class VideoVO {
 		this.exp = exp;
 	}
 
-	public int getVideono() {
+	public String getVideono() {
 		return videono;
 	}
 
-	public void setVideono(int videono) {
+	public void setVideono(String videono) {
 		this.videono = videono;
 	}
 

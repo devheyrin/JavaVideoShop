@@ -7,6 +7,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -26,6 +27,7 @@ public class CustomerView extends JPanel implements ActionListener {
 	JButton bCustNameSearch, bCustTelSearch;
 	
 	CustomerDAO dao;
+	
 	
 	public CustomerView() {
 		tfCustName = new JTextField(20);
@@ -213,13 +215,22 @@ public class CustomerView extends JPanel implements ActionListener {
 			 * # 동명 이인이 있는 경우 고려 ( 나중에 )
 			 */
 			String name = tfCustNameSearch.getText();
+			ArrayList list = new ArrayList();
+			
 			try {
-				CustomerVO vo = dao.searchName(name);
-				tfCustName.setText(vo.getName());
-				tfCustTel.setText(vo.getTel());
-				tfCustTelAid.setText(vo.getAddtel());
-				tfCustAddr.setText(vo.getAddr());
-				tfCustEmail.setText(vo.getEmail());
+				list = dao.searchName(name);
+				System.out.println(list);
+				
+				CustomerView parent = new CustomerView();
+				
+				SameName sn = new SameName(list, parent);
+				
+				
+//				tfCustName.setText(vo.getName());
+//				tfCustTel.setText(vo.getTel());
+//				tfCustTelAid.setText(vo.getAddtel());
+//				tfCustAddr.setText(vo.getAddr());
+//				tfCustEmail.setText(vo.getEmail());
 			} catch (NullPointerException e) {
 				JOptionPane.showMessageDialog(null, "일치하는 회원정보 없음");
 			} catch (Exception e) {
@@ -256,6 +267,28 @@ public class CustomerView extends JPanel implements ActionListener {
 		tfCustTelAid.setText(null);
 		tfCustAddr.setText(null);
 		tfCustEmail.setText(null);
+	}
+
+	public void searchTel(String tel, ActionEvent ev) {
+		// TODO Auto-generated method stub
+		System.out.println("searchTel"+tel);
+		try {
+			CustomerVO vo = dao.searchTel(tel);
+			
+			System.out.println();
+			tfCustName.setText("수정해");
+			tfCustName.setText(vo.getName());
+			tfCustTel.setText(vo.getTel());
+			tfCustTelAid.setText(vo.getAddtel());
+			tfCustAddr.setText(vo.getAddr());
+			tfCustEmail.setText(vo.getEmail());
+			System.out.println("검색 성공!");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "검색 실패");
+		}
+		
 	}
 
 }
